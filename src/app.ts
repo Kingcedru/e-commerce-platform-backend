@@ -3,6 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import { config } from "dotenv";
+import { connectDB } from "@/config/database";
 
 config();
 
@@ -40,8 +41,9 @@ app.use(
   }
 );
 
-const startServer = () => {
+const startServer = async () => {
   try {
+    await connectDB();
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
