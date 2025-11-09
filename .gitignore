@@ -1,0 +1,90 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json.tmp
+
+# Build output
+dist/
+build/
+out/
+coverage/
+.nyc_output/
+lcov-report/
+.vite/
+.next/
+.parcel-cache/
+
+# Runtime files
+pids/
+*.pid
+*.seed
+*.pid.lock
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+
+# Environment & secrets
+.env
+.env.*.local
+.env.local
+.env.test
+.env.production
+secrets.json
+credentials.json
+private.key
+*.pem
+
+# Uploaded files / runtime storage
+uploads/
+storage/
+tmp/
+temp/
+.cache/
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# TypeScript
+*.tsbuildinfo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Docker
+docker-compose.override.yml
+docker-compose.*.yml
+
+# Test tooling
+coverage/
+jest.config.*.js
+nyc_output/
+
+# Package manager artifacts
+.pnpm-debug.log
+.pnpm-store/
+.yarn-integrity
+.yarnrc.yml
+
+# Security / scanning
+.snyk
+
+# Misc
+*.tgz
+*.log.*
+.history
