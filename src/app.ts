@@ -1,0 +1,56 @@
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import helmet from "helmet";
+import { config } from "dotenv";
+
+config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(
+  cors(),
+  helmet(),
+  morgan("dev"),
+  express.json(),
+  express.urlencoded({ extended: true })
+);
+
+interface ErrorWithStatus extends Error {
+  status?: number;
+}
+
+app.get("/health", (_, res) => res.status(200).json({ status: "OK" }));
+
+app.use(
+  (
+    err: ErrorWithStatus,
+    _: express.Request,
+    res: express.Response,
+    _next: express.NextFunction
+  ) => {
+    console.error(err);
+    res.status(err.status || 500).json({
+      error:
+        process.env.NODE_ENV === "development"
+          ? err.message
+          : "Internal server error",
+    });
+  }
+);
+
+const startServer = () => {
+  try {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
+
+export default app;
