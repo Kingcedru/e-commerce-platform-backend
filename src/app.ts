@@ -4,6 +4,8 @@ import morgan from "morgan";
 import helmet from "helmet";
 import { config } from "dotenv";
 import { connectDB } from "@/config/database";
+import { errorHandler } from "./middleware/error-handler.middleware";
+import authRoutes from "./routes/auth.routes";
 
 config();
 
@@ -17,12 +19,14 @@ app.use(
   express.json(),
   express.urlencoded({ extended: true })
 );
+app.use(errorHandler);
 
 interface ErrorWithStatus extends Error {
   status?: number;
 }
 
 app.get("/health", (_, res) => res.status(200).json({ status: "OK" }));
+app.use("/auth", authRoutes);
 
 app.use(
   (
