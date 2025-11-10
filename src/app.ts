@@ -19,7 +19,6 @@ app.use(
   express.json(),
   express.urlencoded({ extended: true })
 );
-app.use(errorHandler);
 
 interface ErrorWithStatus extends Error {
   status?: number;
@@ -27,6 +26,7 @@ interface ErrorWithStatus extends Error {
 
 app.get("/health", (_, res) => res.status(200).json({ status: "OK" }));
 app.use("/auth", authRoutes);
+app.use(errorHandler);
 
 app.use(
   (
