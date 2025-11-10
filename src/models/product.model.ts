@@ -34,7 +34,7 @@ Product.init(
     category: { type: DataTypes.STRING, allowNull: false },
     userId: {
       type: DataTypes.UUID,
-      references: { model: "users", key: "id" },
+      references: { model: "user", key: "id" },
       allowNull: false,
     },
   },
