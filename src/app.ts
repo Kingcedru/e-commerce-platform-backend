@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { config } from "dotenv";
 import { connectDB } from "@/config/database";
 import { errorHandler } from "./middleware/error-handler.middleware";
+import { MulterError } from "multer";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import orderRoutes from "./routes/order.routes";
@@ -34,6 +35,21 @@ app.get("/health", (_, res) => res.status(200).json({ status: "OK" }));
 app.use("/auth", authRoutes);
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
+
+// This middleware will handle Multer-specific errors.
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    if (err instanceof MulterError) {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+    return next(err);
+  }
+);
 
 app.use(errorHandler);
 

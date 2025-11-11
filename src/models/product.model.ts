@@ -14,6 +14,7 @@ export class Product
   public stock!: number;
   public category!: string;
   public userId!: string;
+  public imageUrl!: string | null;
 }
 
 Product.init(
@@ -36,6 +37,10 @@ Product.init(
       type: DataTypes.UUID,
       references: { model: "user", key: "id" },
       allowNull: false,
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {

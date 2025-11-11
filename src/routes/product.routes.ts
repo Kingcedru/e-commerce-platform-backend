@@ -8,6 +8,7 @@ import {
 } from "../controllers/product.controller";
 import { authenticate } from "../middleware/auth.middleware";
 import { isAdmin } from "../middleware/role.middleware";
+import { uploadImage } from "@/middleware/file-upload.middleware";
 
 const router = Router();
 
@@ -29,7 +30,7 @@ const router = Router();
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required: [name, price, stock, description, category]
@@ -39,6 +40,10 @@ const router = Router();
  *               price: { type: number, format: float, example: 49.99 }
  *               stock: { type: integer, example: 150 }
  *               category: { type: string, example: "Peripherals" }
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: The product image file to upload.
  *     responses:
  *       '201': { description: "Product created successfully." }
  *       '400': { description: "Invalid input data." }
@@ -74,7 +79,7 @@ const router = Router();
  *                 totalSize: { type: integer, description: "Total count of products matching the search/filter." }
  *                 totalPages: { type: integer }
  */
-router.post("/", authenticate, isAdmin, createProduct);
+router.post("/", authenticate, isAdmin, uploadImage, createProduct);
 router.get("/", authenticate, getProducts);
 
 /**
@@ -94,12 +99,19 @@ router.get("/", authenticate, getProducts);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               name: { type: string, example: "Updated Gaming Mouse" }
  *               price: { type: number, format: float, example: 55.00 }
+ *               description: { type: string }
+ *               stock: { type: integer }
+ *               category: { type: string }
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: A new product image file to replace the existing one.
  *     responses:
  *       '200': { description: "Product updated successfully." }
  *       '400': { description: "Invalid field data or empty body." }
@@ -137,7 +149,7 @@ router.get("/", authenticate, getProducts);
  *       '404': { description: "Product not found." }
  */
 router.get("/:id", getProductDetails);
-router.put("/:id", authenticate, isAdmin, updateProduct);
+router.put("/:id", authenticate, isAdmin, uploadImage, updateProduct);
 router.delete("/:id", authenticate, isAdmin, deleteProduct);
 
 export default router;

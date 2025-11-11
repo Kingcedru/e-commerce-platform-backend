@@ -9,23 +9,37 @@ import { BadRequestError } from "../utils/errors/bad-request-error";
 import { AuthenticatedRequest } from "../types/auth";
 import { NotFoundError } from "@/utils/errors/not-found-error";
 import { Op } from "sequelize";
+import cloudinary, { dataUri } from "../config/cloudinary.config";
 
 export const createProduct = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const { error, value } = createProductSchema.validate(req.body);
+  const body = {
+    ...req.body,
+    price: req.body.price ? parseFloat(req.body.price) : undefined,
+    stock: req.body.stock ? parseInt(req.body.stock, 10) : undefined,
+  };
+
+  const { error, value } = createProductSchema.validate(body);
+  const file = req.file;
   if (error) {
     return next(new BadRequestError(error.details[0].message));
   }
 
   try {
     const { userId } = req.user!;
+    let imageUrl: string | null = null;
+
+    if (file) {
+      imageUrl = await uploadAndReplaceImage(file);
+    }
 
     const newProduct = await Product.create({
       ...value,
       userId: userId,
+      imageUrl: imageUrl,
     });
 
     sendSuccess(res, 201, "Product created successfully.", newProduct);
@@ -39,7 +53,15 @@ export const updateProduct = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { error, value } = updateProductSchema.validate(req.body);
+  const body = {
+    ...req.body,
+    price: req.body.price ? parseFloat(req.body.price) : undefined,
+    stock: req.body.stock ? parseInt(req.body.stock, 10) : undefined,
+  };
+
+  const { error, value } = updateProductSchema.validate(body);
+  const file = req.file;
+
   if (error) {
     return next(new BadRequestError(error.details[0].message));
   }
@@ -51,6 +73,11 @@ export const updateProduct = async (
 
     if (!product) {
       return next(new NotFoundError(`Product with ID ${productId} not found.`));
+    }
+
+    if (file) {
+      const publicId = extractPublicIdFromUrl(product.imageUrl);
+      product.imageUrl = await uploadAndReplaceImage(file, publicId);
     }
 
     const [, [updatedProduct]] = await Product.update(value, {
@@ -155,4 +182,37 @@ export const deleteProduct = async (
   } catch (err) {
     next(err);
   }
+};
+
+/**
+ * Handles the upload of a file buffer to Cloudinary.
+ * @param file The Express.Multer.File object from req.file
+ * @param existingPublicId Optional public ID to replace/delete an old image
+ * @returns The new image URL
+ */
+const uploadAndReplaceImage = async (
+  file: Express.Multer.File | undefined,
+  existingPublicId: string | null = null
+): Promise<string | null> => {
+  if (!file) return null;
+
+  if (existingPublicId) {
+    // Option 1: Delete the old image (highly recommended)
+    await cloudinary.uploader.destroy(existingPublicId);
+  }
+
+  // Option 2: Upload the new image
+  const fileUri = dataUri(file);
+  const result = await cloudinary.uploader.upload(fileUri as string, {
+    folder: "ecommerce/products",
+  });
+  return result.secure_url;
+};
+
+const extractPublicIdFromUrl = (url: string | null): string | null => {
+  if (!url) return null;
+  const parts = url.split("/");
+  const filename = parts[parts.length - 1];
+  const publicId = filename.substring(0, filename.lastIndexOf("."));
+  return `ecommerce/products/${publicId}`;
 };
