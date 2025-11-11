@@ -134,3 +134,25 @@ export const getProductDetails = async (
     next(err);
   }
 };
+
+export const deleteProduct = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const productId = req.params.id;
+
+  try {
+    const deletedRowCount = await Product.destroy({
+      where: { id: productId },
+    });
+
+    if (deletedRowCount === 0) {
+      return next(new NotFoundError("Product not found."));
+    }
+
+    sendSuccess(res, 200, "Product deleted successfully.");
+  } catch (err) {
+    next(err);
+  }
+};
