@@ -25,7 +25,7 @@
     "tsBuildInfoFile": "node_modules/.cache/tsconfig.tsbuildinfo",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "multer"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
