@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import { config } from "dotenv";
-import { connectDB } from "@/config/database.config";
+import { connectDB } from "@/config/database";
 import { errorHandler } from "./middleware/error-handler.middleware";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";

@@ -14,8 +14,8 @@ const router = Router();
 /**
  * @swagger
  * tags:
- * name: Products
- * description: Product management and public catalog browsing
+ *   - name: Products
+ *     description: Product management (Admin) and public catalog browsing
  */
 
 /**
@@ -40,35 +40,22 @@ const router = Router();
  *               stock: { type: integer, example: 150 }
  *               category: { type: string, example: "Peripherals" }
  *     responses:
- *       '201':
- *         description: Product created successfully.
- *         content:
- *           application/json:
- *             schema:
- *               allOf:
- *                 - $ref: '#/components/schemas/BaseResponse'
- *                 - type: object
- *                   properties:
- *                     object:
- *                       type: object
- *       '400':
- *         description: Invalid input data.
- *       '401':
- *         description: Unauthorized (No token provided).
- *       '403':
- *         description: Forbidden (User is not Admin).
+ *       '201': { description: "Product created successfully." }
+ *       '400': { description: "Invalid input data." }
+ *       '401': { description: "Unauthorized (No token provided)." }
+ *       '403': { description: "Forbidden (User is not Admin)." }
  *   get:
- *     summary: Get a paginated list of products with optional search
+ *     summary: Get a paginated list of products with optional search (PUBLIC)
  *     tags: [Products]
  *     parameters:
  *       - in: query
  *         name: page
  *         schema: { type: integer, default: 1 }
- *         description: Page number to retrieve.
+ *         description: The page number to retrieve.
  *       - in: query
  *         name: limit
  *         schema: { type: integer, default: 10 }
- *         description: Products per page.
+ *         description: The number of products per page.
  *       - in: query
  *         name: search
  *         schema: { type: string }
@@ -79,19 +66,77 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               # Note: You would create a specific PaginatedResponse schema here
  *               type: object
  *               properties:
- *                 success: { type: boolean }
- *                 object: { type: array, items: { type: object } }
- *                 pageNumber: { type: integer }
- *                 totalSize: { type: integer }
- *                 # ... other pagination fields
+ *                 success: { type: boolean, example: true }
+ *                 object: { type: array, description: "Array of product objects for the current page." }
+ *                 pageNumber: { type: integer, description: "The current page number." }
+ *                 totalSize: { type: integer, description: "Total count of products matching the search/filter." }
+ *                 totalPages: { type: integer }
  */
-
-router.get("/", authenticate, getProducts);
-router.get("/:id", getProductDetails);
 router.post("/", authenticate, isAdmin, createProduct);
+router.get("/", authenticate, getProducts);
+
+/**
+ * @swagger
+ * /products/{id}:
+ *   put:
+ *     summary: Updates an existing product (ADMIN REQUIRED)
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: ID of the product to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name: { type: string, example: "Updated Gaming Mouse" }
+ *               price: { type: number, format: float, example: 55.00 }
+ *     responses:
+ *       '200': { description: "Product updated successfully." }
+ *       '400': { description: "Invalid field data or empty body." }
+ *       '403': { description: "Forbidden." }
+ *       '404': { description: "Product not found." }
+ *
+ *   get:
+ *     summary: Get detailed information for a specific product (PUBLIC)
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: ID of the product to retrieve.
+ *     responses:
+ *       '200': { description: "Product details retrieved successfully." }
+ *       '404': { description: "Product not found." }
+ *
+ *   delete:
+ *     summary: Deletes a product permanently (ADMIN REQUIRED)
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: ID of the product to delete.
+ *     responses:
+ *       '200': { description: "Product deleted successfully." }
+ *       '401': { description: "Unauthorized." }
+ *       '403': { description: "Forbidden." }
+ *       '404': { description: "Product not found." }
+ */
+router.get("/:id", getProductDetails);
 router.put("/:id", authenticate, isAdmin, updateProduct);
 router.delete("/:id", authenticate, isAdmin, deleteProduct);
 

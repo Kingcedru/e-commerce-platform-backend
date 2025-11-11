@@ -4,15 +4,14 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "A2SV E-commerce Platform Backend API",
+      title: "E-commerce Platform Backend API",
       version: "1.0.0",
       description:
-        "Comprehensive REST API for managing products, users, and orders, implemented for the CoreDev Interview 2025.",
+        "Comprehensive REST API for an e-commerce platform, enabling product management, user authentication, and order processing.",
     },
     servers: [
       {
         url: "http://localhost:3000",
-        description: "Local Development Server",
       },
     ],
     components: {
