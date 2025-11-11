@@ -5,6 +5,7 @@ import { sendSuccess } from "../utils/response";
 import { createOrderTransaction } from "../services/order.service";
 import { AuthenticatedRequest } from "@/types/auth";
 import { OrderItemRequestDto } from "@/types/order-item";
+import { Order } from "@/models/order.model";
 
 export const placeOrder = async (
   req: AuthenticatedRequest,
@@ -23,6 +24,26 @@ export const placeOrder = async (
     const newOrder = await createOrderTransaction(userId, orderItems);
 
     sendSuccess(res, 201, "Order placed successfully.", newOrder);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getOrders = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user!.userId;
+
+    const orders = await Order.findAll({
+      where: { userId: userId },
+      attributes: ["id", "status", "totalPrice", "createdAt"],
+      order: [["createdAt", "DESC"]],
+    });
+
+    sendSuccess(res, 200, "Order history retrieved successfully.", orders);
   } catch (err) {
     next(err);
   }
