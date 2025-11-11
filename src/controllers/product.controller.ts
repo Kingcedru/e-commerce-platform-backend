@@ -8,6 +8,7 @@ import { sendPaginatedSuccess, sendSuccess } from "../utils/response";
 import { BadRequestError } from "../utils/errors/bad-request-error";
 import { AuthenticatedRequest } from "../types/auth";
 import { NotFoundError } from "@/utils/errors/not-found-error";
+import { Op } from "sequelize";
 
 export const createProduct = async (
   req: AuthenticatedRequest,
@@ -73,6 +74,7 @@ export const getProducts = async (
     const limit =
       parseInt((req.query.limit as string) || (req.query.pageSize as string)) ||
       10;
+    const searchTerm = req.query.search as string;
 
     if (page < 1 || limit < 1) {
       return next(
@@ -81,8 +83,18 @@ export const getProducts = async (
     }
 
     const offset = (page - 1) * limit;
+    let whereClause = {};
+
+    if (searchTerm && searchTerm.trim() !== "") {
+      whereClause = {
+        name: {
+          [Op.iLike]: `%${searchTerm.trim()}%`,
+        },
+      };
+    }
 
     const result = await Product.findAndCountAll({
+      where: whereClause,
       limit: limit,
       offset: offset,
       attributes: ["id", "name", "price", "stock", "category", "description"],

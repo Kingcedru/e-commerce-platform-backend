@@ -9,7 +9,7 @@ import { isAdmin } from "../middleware/role.middleware";
 
 const router = Router();
 
-router.get("/", authenticate, isAdmin, getProducts);
+router.get("/", authenticate, getProducts);
 router.post("/", authenticate, isAdmin, createProduct);
 router.put("/:id", authenticate, isAdmin, updateProduct);
 
