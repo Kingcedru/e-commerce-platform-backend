@@ -3,11 +3,13 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import { config } from "dotenv";
-import { connectDB } from "@/config/database";
+import { connectDB } from "@/config/database.config";
 import { errorHandler } from "./middleware/error-handler.middleware";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import orderRoutes from "./routes/order.routes";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.config";
 
 config();
 
@@ -25,6 +27,8 @@ app.use(
 interface ErrorWithStatus extends Error {
   status?: number;
 }
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/health", (_, res) => res.status(200).json({ status: "OK" }));
 app.use("/auth", authRoutes);

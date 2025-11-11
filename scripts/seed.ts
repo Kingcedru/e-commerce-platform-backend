@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: "./.env" });
 import bcrypt from "bcrypt";
 import { UserRole } from "@/enums/role";
-import { connectDB } from "@/config/database";
+import { connectDB } from "@/config/database.config";
 import { User } from "@/models/user.model";
 
 const createAdmin = async () => {

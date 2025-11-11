@@ -1,4 +1,4 @@
-import sequelize from "@/config/database";
+import sequelize from "@/config/database.config";
 import { UserRole } from "@/enums/role";
 import { UserType } from "@/types/user";
 import { DataTypes, Model, Optional } from "sequelize";

@@ -1,4 +1,4 @@
-import sequelize from "../config/database";
+import sequelize from "../config/database.config";
 import { Product } from "../models/product.model";
 import { Order } from "../models/order.model";
 import { NotFoundError } from "../utils/errors/not-found-error";
