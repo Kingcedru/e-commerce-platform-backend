@@ -114,3 +114,23 @@ export const getProducts = async (
     next(err);
   }
 };
+
+export const getProductDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const productId = req.params.id;
+
+  try {
+    const product = await Product.findByPk(productId);
+
+    if (!product) {
+      return next(new NotFoundError("Product not found."));
+    }
+
+    sendSuccess(res, 200, "Product details retrieved successfully.", product);
+  } catch (err) {
+    next(err);
+  }
+};
