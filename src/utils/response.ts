@@ -11,6 +11,7 @@ interface PaginatedResponse extends BaseResponse {
   pageNumber: number;
   pageSize: number;
   totalSize: number;
+  totalPages: number;
 }
 
 export const sendSuccess = (

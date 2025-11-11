@@ -1,10 +1,10 @@
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { Product } from "../models/product.model";
 import {
   createProductSchema,
   updateProductSchema,
 } from "../utils/validation/product.schema";
-import { sendSuccess } from "../utils/response";
+import { sendPaginatedSuccess, sendSuccess } from "../utils/response";
 import { BadRequestError } from "../utils/errors/bad-request-error";
 import { AuthenticatedRequest } from "../types/auth";
 import { NotFoundError } from "@/utils/errors/not-found-error";
@@ -58,6 +58,46 @@ export const updateProduct = async (
     });
 
     sendSuccess(res, 200, "Product updated successfully.", updatedProduct);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit =
+      parseInt((req.query.limit as string) || (req.query.pageSize as string)) ||
+      10;
+
+    if (page < 1 || limit < 1) {
+      return next(
+        new BadRequestError("Page and limit/pageSize must be positive numbers.")
+      );
+    }
+
+    const offset = (page - 1) * limit;
+
+    const result = await Product.findAndCountAll({
+      limit: limit,
+      offset: offset,
+      attributes: ["id", "name", "price", "stock", "category", "description"],
+    });
+
+    const totalProducts = result.count;
+    const products = result.rows;
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    sendPaginatedSuccess(res, "Products retrieved successfully.", products, {
+      pageNumber: page,
+      pageSize: limit,
+      totalSize: totalProducts,
+      totalPages: totalPages,
+    });
   } catch (err) {
     next(err);
   }
