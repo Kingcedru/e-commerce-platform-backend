@@ -44,7 +44,7 @@ Follow these steps to get the project running on your local machine.
 ### 2. Clone the Repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Kingcedru/e-commerce-platform-backend.git
 cd e-commerce-platform-backend
 ```
 
