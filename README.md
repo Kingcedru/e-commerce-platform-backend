@@ -12,6 +12,7 @@ This repository contains the backend REST API for a comprehensive e-commerce pla
 - **Transactional Order System**: Users can place orders, and the system uses database transactions to ensure data integrity (e.g., updating stock levels).
 - **Order History**: Authenticated users can view their past orders.
 - **API Documentation**: Integrated Swagger/OpenAPI documentation available at the `/api-docs` endpoint.
+- **Comprehensive Testing**: Unit and integration tests using Jest and Supertest to ensure API reliability and correctness.
 
 ---
 
@@ -85,6 +86,16 @@ npm start
 
 The server will start, and you can access it at `http://localhost:3000` (or your specified `PORT`). The API documentation will be available at `http://localhost:3000/api-docs`.
 
+### 6. Running Tests
+
+This project uses **Jest** for unit and integration testing. The test suite is configured to run against a mocked database layer, ensuring that tests are fast and do not require a live database connection.
+
+To execute all tests, run:
+
+```bash
+npm test
+```
+
 ---
 
 ## Environment Variables
@@ -120,5 +131,6 @@ ADMIN_PASSWORD="your_secure_admin_password"
 - `DATABASE_URL`: The connection string for your PostgreSQL database.
 - `JWT_SECRET`: A secret key used to sign and verify JSON Web Tokens.
 - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`: Credentials for your Cloudinary account, necessary for handling image uploads.
+- `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`: Credentials used by the `npm run seed:admin` script to create the initial administrator account in the database.
 
 ---
