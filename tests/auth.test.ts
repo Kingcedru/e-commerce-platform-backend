@@ -4,13 +4,11 @@ import { User } from "../src/models/user.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-// Mock the hashing functions used in the controller
 jest.mock("bcrypt", () => ({
   hash: jest.fn((password) => Promise.resolve(`hashed_${password}`)),
   compare: jest.fn(),
 }));
 
-// --- Test Suite for POST /auth/register (Signup - User Story 1) ---
 describe("POST /auth/register", () => {
   it("should return 201 and create a user with valid data", async () => {
     (User.findOne as jest.Mock).mockResolvedValue(null);
@@ -50,7 +48,6 @@ describe("POST /auth/register", () => {
   });
 
   it("should return 400 for a password that fails complexity requirements", async () => {
-    // Fail complexity only, meets minimum length (8 chars)
     const response = await request(app).post("/auth/register").send({
       username: "WeakUser",
       email: "weak@example.com",
@@ -58,14 +55,12 @@ describe("POST /auth/register", () => {
     });
 
     expect(response.statusCode).toBe(400);
-    // Expect the complexity message now
     expect(response.body.message).toContain(
       "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character."
     );
   });
 });
 
-// --- Test Suite for POST /auth/login (Login - User Story 2) ---
 describe("POST /auth/login", () => {
   const mockUser = {
     id: "uuid-123",
