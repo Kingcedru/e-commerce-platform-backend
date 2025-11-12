@@ -21,7 +21,7 @@ const fileFilter = (
 export const uploadImage = multer({
   storage: storage,
   limits: {
-    fileSize: 10 * 1024 * 1024, // Increased to 10MB
+    fileSize: 10 * 1024 * 1024,
   },
   fileFilter: fileFilter,
 }).single("image");
