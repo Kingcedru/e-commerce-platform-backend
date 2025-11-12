@@ -16,7 +16,6 @@ dotenv.config();
 
 const app = express();
 
-// Middlewares
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
@@ -26,9 +25,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/health", (_, res) => res.status(200).json({ status: "OK" }));
 app.use("/auth", authRoutes);
-// Routes
 app.use("/products", productRoutes);
-app.use("/auth", authRoutes);
 app.use("/orders", orderRoutes);
 
 // This middleware will handle Multer-specific errors.
