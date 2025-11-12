@@ -4,7 +4,6 @@
     "module": "Node16",
     "lib": ["ES2020"],
     "moduleResolution": "node16",
-    "ignoreDeprecations": "6.0",
     "rootDir": "src",
     "outDir": "dist",
     "strict": true,
@@ -26,9 +25,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "types": ["node", "jest", "multer"],
-    "baseUrl": ".",
+    "isolatedModules": true,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*", "scripts", "tests/**/*"],

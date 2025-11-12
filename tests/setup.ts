@@ -25,14 +25,16 @@ jest.mock("../src/models/order.model", () => ({
   },
 }));
 
-jest.mock("../src/models/orderItem.model", () => ({
+jest.mock("../src/models/order-item.model", () => ({
   OrderItem: {
     bulkCreate: jest.fn(),
   },
 }));
 
 jest.mock("../src/config/database", () => ({
+  __esModule: true, // This is important for ES module default exports
   default: {
+    // This is the mock for the default export
     transaction: jest.fn(async (callback) => {
       return callback({
         commit: jest.fn(),
@@ -43,6 +45,7 @@ jest.mock("../src/config/database", () => ({
     authenticate: jest.fn(),
     sync: jest.fn(),
   },
+  connectDB: jest.fn(() => Promise.resolve()), // Mock the named export as well
 }));
 
 beforeEach(() => {

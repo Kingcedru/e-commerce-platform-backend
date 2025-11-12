@@ -2,17 +2,16 @@ import request from "supertest";
 import app from "../src/app";
 import { Product } from "../src/models/product.model";
 import jwt from "jsonwebtoken";
-import { UserRole } from "@/enums/role";
 
 const mockAdminPayload = {
   userId: "admin-id-123",
   username: "Admin",
-  role: UserRole.Admin,
+  role: "Admin",
 };
 const mockUserPayload = {
   userId: "user-id-456",
   username: "User",
-  role: UserRole.User,
+  role: "User",
 };
 const adminToken = jwt.sign(mockAdminPayload, "TEST_SECRET");
 const userToken = jwt.sign(mockUserPayload, "TEST_SECRET");
@@ -41,7 +40,13 @@ describe("POST /products", () => {
     const response = await request(app)
       .post("/products")
       .set("Authorization", adminHeader)
-      .send({ ...mockProduct, userId: undefined });
+      .send({
+        name: "Test Product",
+        description: "A great product",
+        price: 10.99,
+        stock: 50,
+        category: "Electronics",
+      });
 
     expect(response.statusCode).toBe(201);
     expect(Product.create).toHaveBeenCalled();
@@ -112,7 +117,9 @@ describe("GET /products (List & Search)", () => {
       count: 15,
     });
 
-    const response = await request(app).get("/products?page=1");
+    const response = await request(app)
+      .get("/products?page=1")
+      .set("Authorization", userHeader);
 
     expect(response.statusCode).toBe(200);
     expect(response.body.pageNumber).toBe(1);
@@ -126,7 +133,9 @@ describe("GET /products (List & Search)", () => {
       count: 0,
     });
 
-    await request(app).get("/products?search=shirt");
+    await request(app)
+      .get("/products?search=shirt")
+      .set("Authorization", userHeader);
 
     expect(Product.findAndCountAll).toHaveBeenCalledWith(
       expect.objectContaining({
